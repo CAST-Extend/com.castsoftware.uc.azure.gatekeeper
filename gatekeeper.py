@@ -1,9 +1,10 @@
 from cast_common.aipRestCall import AipRestCall
 from cast_common.logger import Logger,INFO
 from cast_common.util import format_table
-from pandas import ExcelWriter
+from pandas import ExcelWriter,merge,options
 from argparse import ArgumentParser
 from os.path import abspath,exists
+from datetime import datetime
 
 if __name__ == "__main__":
 
@@ -25,7 +26,6 @@ if __name__ == "__main__":
     parser.add_argument('-o','--output',required=False,help='Output Folder')
 
     args=parser.parse_args()
-
     log = Logger()
 
     aip = AipRestCall(args.restURL, args.user, args.password,log_level=INFO)
@@ -35,12 +35,18 @@ if __name__ == "__main__":
     else:
         total = 0
         added = 0
-        snapshot_id = aip.get_latest_snapshot(domain_id)['id']
+        snapshot = aip.get_latest_snapshot(domain_id)
+        if not bool(snapshot):
+            log.error(f'No snapshots found: {args.application}')
+            exit (-1)
+        snapshot_id = snapshot['id']
 
         base='./'
         if not args.output is None:
             base = args.output
-        file_name = abspath(f'{base}/violations.xlsx')
+
+        s = datetime.now().strftime("%Y%m%d-%H%M%S")
+        file_name = abspath(f'{base}/violations-{args.application}-{s}.xlsx')
         writer = ExcelWriter(file_name, engine='xlsxwriter')
 
         first=True
@@ -60,6 +66,17 @@ if __name__ == "__main__":
 
                 if not detail_df.empty:
                     format_table(writer,detail_df,name,[120,50,75,10])
+
+        prev_snapshot = aip.get_prev_snapshot(domain_id)
+        if bool(prev_snapshot):
+            new_grades = aip.get_grades_by_technology(domain_id,snapshot)
+            unwanted=new_grades.columns[new_grades.columns.str.startswith('ISO')]
+            new_grades=new_grades.drop(unwanted,axis=1).transpose()[['All']].rename(columns={'All':'Latest'})
+            
+            old_grades = aip.get_grades_by_technology(domain_id,prev_snapshot).drop(unwanted,axis=1).transpose()[['All']].rename(columns={'All':'Previous'})
+            combined = merge(old_grades,new_grades,left_index=True,right_index=True).reset_index()
+            combined['Change'] = combined[['Previous', 'Latest']].pct_change(axis=1)['Latest']
+            format_table(writer,combined,'Grades',[50,10,10,10])
 
         writer.close()
         log.info(f'{added} new violations added')

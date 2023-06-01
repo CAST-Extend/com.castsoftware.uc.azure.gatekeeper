@@ -1,3 +1,3 @@
-com.castsoftware.uc.python.common==1.0.5
+com.castsoftware.uc.python.common==1.0.6
 pandas
 XlsxWriter
