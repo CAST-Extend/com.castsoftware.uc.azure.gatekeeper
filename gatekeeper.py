@@ -77,6 +77,15 @@ if __name__ == "__main__":
             combined = merge(old_grades,new_grades,left_index=True,right_index=True).reset_index()
             combined['Change'] = combined[['Previous', 'Latest']].pct_change(axis=1)['Latest']
             format_table(writer,combined,'Grades',[50,10,10,10])
+            
+            grade_table = combined.to_html()
+            start = f'<!DOCTYPE html> <html> <head> <title>Critical Violations</title> </head> <body> <h1>Critical Violations</h1> <p>Added critical violations count is {added} </p> <br>'
+            end = '<br> <body> <br> </html>'
+            html_body = start + grade_table + end
+
+            file = open("violations_body.html", "w")
+            file.write(html_body)
+            file.close()
 
         writer.close()
         log.info(f'{added} new violations added')
