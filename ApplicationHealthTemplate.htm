@@ -1,0 +1,81 @@
+<html>
+
+<head>
+<style>
+	.healthTable {
+		width: 100%;
+		border-top: 1px solid black;
+		border-bottom: 1px solid black;
+	}
+	th {
+		border-bottom: 1px solid black;
+	}
+	td {
+		padding-right: 5px;
+		padding-top: 3px;
+		padding-bottom: 3px;
+	}
+	.number {
+		text-align: right;
+	}
+	.negNumber {
+		text-align: right;
+		color: DarkRed
+	}
+</style>
+
+</head>
+
+<body lang=EN-US style='word-wrap:break-word'>
+
+<div class=WordSection1>
+	<p><img width=32 height=32 src="ApplicationHealthReport_files/image001.png"></p>
+
+<table border=0 cellspacing=0 cellpadding=0 width="100%">
+ <tr>
+  <td width="25%" valign=top>
+	<img width=200 height=100 id="Picture 2" src="img/logo.png">
+  </td>
+  <td width="75%" style='width:296.5pt;padding:0in 5.4pt 0in 5.4pt'>
+	<h1 class=MsoTitle align=center style='text-align:center'>Application Health Report</h1>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal>Health results for <b>{application}</b> as of <b>{snapshot_date}</b> are
+now accessible, with data spanning from <b></b>{prev_snapshot_date} until present. A
+total of <b>{new_critical_viol}</b> new critical violations have been identified, out
+of <b>{total_critical_viol}</b> in total.</p>
+
+<table class="healthTable">
+	<tr>
+		<th>Health Factor</th>
+		<th width="10%">Previous</th>
+		<th width="10%">Latest</th>
+		<th width="10%">Delta</th>
+	</tr>
+	{table_health_score}
+	<!-- sample row, remove for production -->
+	<tr>
+		<td>TQI</td>
+		<td class="number">3.04</td>
+		<td class="number">2.93</td>
+		<td class="negNumber">-3%</td>
+	</tr>
+	<tr>
+		<td>Robustness</td>
+	</tr>
+	<!-- end of sample row -->
+</table>
+
+
+<p class=MsoNormal>To obtain additional information, please refer to the CAST
+Imaging Health or Engineering Dashboards.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
