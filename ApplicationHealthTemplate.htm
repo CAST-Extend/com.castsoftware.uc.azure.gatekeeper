@@ -3,24 +3,32 @@
 <head>
 <style>
 	.healthTable {
-		width: 100%;
+		width: 50%;
 		border-top: 1px solid black;
 		border-bottom: 1px solid black;
 	}
 	th {
+		text-align: left;
+		padding-left: 15px;
 		border-bottom: 1px solid black;
 	}
 	td {
+		padding-left: 15px;
 		padding-right: 5px;
 		padding-top: 3px;
 		padding-bottom: 3px;
+		border-bottom: 1px solid #DDDDDD;
 	}
 	.number {
-		text-align: right;
+		text-align: center;
 	}
 	.negNumber {
-		text-align: right;
-		color: DarkRed
+		text-align: center;
+		color: red
+	}
+	.posNumber {
+		text-align: center;
+		color:green
 	}
 </style>
 
@@ -29,8 +37,6 @@
 <body lang=EN-US style='word-wrap:break-word'>
 
 <div class=WordSection1>
-	<p><img width=32 height=32 src="ApplicationHealthReport_files/image001.png"></p>
-
 <table border=0 cellspacing=0 cellpadding=0 width="100%">
  <tr>
   <td width="25%" valign=top>
@@ -43,10 +49,12 @@
 </table>
 
 <p class=MsoNormal>Health results for <b>{application}</b> as of <b>{snapshot_date}</b> are
-now accessible, with data spanning from <b></b>{prev_snapshot_date} until present. A
-total of <b>{new_critical_viol}</b> new critical violations have been identified, out
-of <b>{total_critical_viol}</b> in total.</p>
-
+now accessible, with data spanning from <b>{prev_snapshot_date}</b> until present. </p>
+New critical violations added in current version: <b>{new_critical_viol}</b></p> 
+Total critical violations in current version: <b>{total_critical_viol}</b></p>
+</p>
+Application Health Scores 
+</p>
 <table class="healthTable">
 	<tr>
 		<th>Health Factor</th>
@@ -64,13 +72,16 @@ of <b>{total_critical_viol}</b> in total.</p>
 	</tr>
 	<tr>
 		<td>Robustness</td>
+		<td class="number">3.04</td>
+		<td class="number">3.93</td>
+		<td class="posNumber">5%</td>
 	</tr>
 	<!-- end of sample row -->
 </table>
 
 
-<p class=MsoNormal>To obtain additional information, please refer to the CAST
-Imaging Health or Engineering Dashboards.</p>
+<p class=MsoNormal>For full insights into results, refer to the <a href="http://tag_health_dashboard_url">CAST
+	Imaging Health</a> or <a href="http://tag_health_dashboard_url">Engineering Dashboards.</a></p>
 
 <p class=MsoNormal>&nbsp;</p>
 
