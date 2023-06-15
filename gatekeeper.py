@@ -1,7 +1,7 @@
 from cast_common.aipRestCall import AipRestCall
 from cast_common.logger import Logger,INFO
 from cast_common.util import format_table
-from pandas import ExcelWriter,merge,options
+from pandas import ExcelWriter,merge,options, DataFrame
 from argparse import ArgumentParser
 from os.path import abspath,exists
 from datetime import datetime
@@ -54,7 +54,9 @@ if __name__ == "__main__":
             name = measures[code]
             df=aip.get_rules(domain_id,snapshot_id,code,critical=True,non_critical=False,start_row=1,max_rows=999999)
             if not df.empty:
-                total=len(df)
+                if first:
+                    total=len(df)
+                    
                 df=df.loc[df['diagnosis.status'] == 'added']
 
                 if first:
@@ -67,6 +69,7 @@ if __name__ == "__main__":
                 if not detail_df.empty:
                     format_table(writer,detail_df,name,[120,50,75,10])
 
+        combined = DataFrame()
         prev_snapshot = aip.get_prev_snapshot(domain_id)
         if bool(prev_snapshot):
             new_grades = aip.get_grades_by_technology(domain_id,snapshot)
@@ -77,15 +80,94 @@ if __name__ == "__main__":
             combined = merge(old_grades,new_grades,left_index=True,right_index=True).reset_index()
             combined['Change'] = combined[['Previous', 'Latest']].pct_change(axis=1)['Latest']
             format_table(writer,combined,'Grades',[50,10,10,10])
-            
-            grade_table = combined.to_html()
-            start = f'<!DOCTYPE html> <html> <head> <title>Critical Violations</title> </head> <body> <h1>Critical Violations</h1> <p>Added critical violations count is {added} </p> <br>'
-            end = '<br> <body> <br> </html>'
-            html_body = start + grade_table + end
 
-            file = open("violations_body.html", "w")
-            file.write(html_body)
-            file.close()
+            
+        internal_css="""<style>
+                            .healthTable { width: 50%; border-top: 1px solid black; border-bottom: 1px solid black; }
+                            th { text-align: left; padding-left: 15px; border-bottom: 1px solid black; }
+                            td { padding-left: 15px; padding-right: 5px; padding-top: 3px; padding-bottom: 3px; border-bottom: 1px solid #DDDDDD;}
+                            .number { text-align: center; }
+                            .negNumber { text-align: center; color: red }
+                            .posNumber { text-align: center; color:green }
+                        </style>"""
+
+        #if application does not contains previous snapshot then prev_snapshot['date'] = 0
+        if  len(prev_snapshot) == 0:
+            prev_snapshot['date'] = 0
+        prev_snapshot_date = prev_snapshot['date']
+
+        table_data = ''
+        if not combined.empty:
+
+            TQI_no_type = "negNumber" if combined.iloc[0]['Change'] < 0 else "posNumber"
+            Robustness_no_type = "negNumber" if combined.iloc[1]['Change'] < 0 else "posNumber"
+            Efficiency_no_type = "negNumber" if combined.iloc[2]['Change'] < 0 else "posNumber"
+            Security_no_type = "negNumber" if combined.iloc[3]['Change'] < 0 else "posNumber"
+            Transferability_no_type = "negNumber" if combined.iloc[4]['Change'] < 0 else "posNumber"
+            Changeability_no_type = "negNumber" if combined.iloc[5]['Change'] < 0 else "posNumber"
+            Documentation_no_type = "negNumber" if combined.iloc[6]['Change'] < 0 else "posNumber"
+
+            table_data =f"""
+                <tr>
+                    <td>TQI</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[0]['Previous'], 2)}</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[0]['Latest'], 2)}</td>
+                    <td class="{TQI_no_type}">{"%.2f" % round(combined.iloc[0]['Change'], 2)}</td>
+                </tr>
+                <tr>
+                    <td>Robustness</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[1]['Previous'], 2)}</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[1]['Latest'], 2)}</td>
+                    <td class="{Robustness_no_type}">{"%.2f" % round(combined.iloc[1]['Change'], 2)}</td>
+                </tr>
+                <tr>
+                    <td>Efficiency</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[2]['Previous'], 2)}</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[2]['Latest'], 2)}</td>
+                    <td class="{Efficiency_no_type}">{"%.2f" % round(combined.iloc[2]['Change'], 2)}</td>
+                </tr>
+                <tr>
+                    <td>Security</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[3]['Previous'], 2)}</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[3]['Latest'], 2)}</td>
+                    <td class="{Security_no_type}">{"%.2f" % round(combined.iloc[3]['Change'], 2)}</td>
+                </tr>
+                <tr>
+                    <td>Transferability</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[4]['Previous'], 2)}</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[4]['Latest'], 2)}</td>
+                    <td class="{Transferability_no_type}">{"%.2f" % round(combined.iloc[4]['Change'], 2)}</td>
+                </tr>
+                <tr>
+                    <td>Changeability</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[5]['Previous'], 2)}</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[5]['Latest'], 2)}</td>
+                    <td class="{Changeability_no_type}">{"%.2f" % round(combined.iloc[5]['Change'], 2)}</td>
+                </tr>
+                <tr>
+                    <td>Documentation</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[6]['Previous'], 2)}</td>
+                    <td class="number">{"%.2f" % round(combined.iloc[6]['Latest'], 2)}</td>
+                    <td class="{Documentation_no_type}">{"%.2f" % round(combined.iloc[6]['Change'], 2)}</td>
+                </tr>
+                """
+
+        # it contains data of various fields
+        context = {
+            "internal_css": internal_css,
+            "application": args.application,
+            "snapshot_date": snapshot['date'],
+            "prev_snapshot_date": prev_snapshot_date,
+            "new_critical_viol": added,
+            "total_critical_viol":total,
+            "table_health_score":table_data
+        }
+
+        # passing context dictionary data to html file 
+        with open("ApplicationHealthTemplate.htm", "r") as file:
+            html = file.read().format(**context)
+            with open("ApplicationHealth.htm", "w") as file2:
+                file2.write(html)
 
         writer.close()
         log.info(f'{added} new violations added')
