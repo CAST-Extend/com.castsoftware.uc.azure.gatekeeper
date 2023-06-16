@@ -81,16 +81,6 @@ if __name__ == "__main__":
             combined['Change'] = combined[['Previous', 'Latest']].pct_change(axis=1)['Latest']
             format_table(writer,combined,'Grades',[50,10,10,10])
 
-            
-        internal_css="""<style>
-                            .healthTable { width: 50%; border-top: 1px solid black; border-bottom: 1px solid black; }
-                            th { text-align: left; padding-left: 15px; border-bottom: 1px solid black; }
-                            td { padding-left: 15px; padding-right: 5px; padding-top: 3px; padding-bottom: 3px; border-bottom: 1px solid #DDDDDD;}
-                            .number { text-align: center; }
-                            .negNumber { text-align: center; color: red }
-                            .posNumber { text-align: center; color:green }
-                        </style>"""
-
         #if application does not contains previous snapshot then prev_snapshot['date'] = 0
         if  len(prev_snapshot) == 0:
             prev_snapshot['date'] = 0
@@ -99,62 +89,62 @@ if __name__ == "__main__":
         table_data = ''
         if not combined.empty:
 
-            TQI_no_type = "negNumber" if combined.iloc[0]['Change'] < 0 else "posNumber"
-            Robustness_no_type = "negNumber" if combined.iloc[1]['Change'] < 0 else "posNumber"
-            Efficiency_no_type = "negNumber" if combined.iloc[2]['Change'] < 0 else "posNumber"
-            Security_no_type = "negNumber" if combined.iloc[3]['Change'] < 0 else "posNumber"
-            Transferability_no_type = "negNumber" if combined.iloc[4]['Change'] < 0 else "posNumber"
-            Changeability_no_type = "negNumber" if combined.iloc[5]['Change'] < 0 else "posNumber"
-            Documentation_no_type = "negNumber" if combined.iloc[6]['Change'] < 0 else "posNumber"
+            TQI_style = "text-align: center; color: red" if combined.iloc[0]['Change'] < 0 else "text-align: center; color:green"
+            Robustness_style = "text-align: center; color: red" if combined.iloc[1]['Change'] < 0 else "text-align: center; color:green"
+            Efficiency_style = "text-align: center; color: red" if combined.iloc[2]['Change'] < 0 else "text-align: center; color:green"
+            Security_style = "text-align: center; color: red" if combined.iloc[3]['Change'] < 0 else "text-align: center; color:green"
+            Transferability_style = "text-align: center; color: red" if combined.iloc[4]['Change'] < 0 else "text-align: center; color:green"
+            Changeability_style = "text-align: center; color: red" if combined.iloc[5]['Change'] < 0 else "text-align: center; color:green"
+            Documentation_style = "text-align: center; color: red" if combined.iloc[6]['Change'] < 0 else "text-align: center; color:green"
+            td_style = "padding-left: 15px; padding-right: 5px; padding-top: 3px; padding-bottom: 3px; border-bottom: 1px solid #DDDDDD;"
 
             table_data =f"""
                 <tr>
-                    <td>TQI</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[0]['Previous'], 2)}</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[0]['Latest'], 2)}</td>
-                    <td class="{TQI_no_type}">{"%.2f" % round(combined.iloc[0]['Change'], 2)}</td>
+                    <td style="{td_style}">TQI</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[0]['Previous'], 2)}</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[0]['Latest'], 2)}</td>
+                    <td style="{TQI_style}; {td_style}">{"%.2f" % round(combined.iloc[0]['Change'], 2)}</td>
                 </tr>
                 <tr>
-                    <td>Robustness</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[1]['Previous'], 2)}</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[1]['Latest'], 2)}</td>
-                    <td class="{Robustness_no_type}">{"%.2f" % round(combined.iloc[1]['Change'], 2)}</td>
+                    <td style="padding-left: 15px; {td_style}">Robustness</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[1]['Previous'], 2)}</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[1]['Latest'], 2)}</td>
+                    <td style="{Robustness_style}; {td_style}">{"%.2f" % round(combined.iloc[1]['Change'], 2)}</td>
                 </tr>
                 <tr>
-                    <td>Efficiency</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[2]['Previous'], 2)}</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[2]['Latest'], 2)}</td>
-                    <td class="{Efficiency_no_type}">{"%.2f" % round(combined.iloc[2]['Change'], 2)}</td>
+                    <td style="{td_style}">Efficiency</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[2]['Previous'], 2)}</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[2]['Latest'], 2)}</td>
+                    <td style="{Efficiency_style}; {td_style}">{"%.2f" % round(combined.iloc[2]['Change'], 2)}</td>
                 </tr>
                 <tr>
-                    <td>Security</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[3]['Previous'], 2)}</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[3]['Latest'], 2)}</td>
-                    <td class="{Security_no_type}">{"%.2f" % round(combined.iloc[3]['Change'], 2)}</td>
+                    <td style="{td_style}">Security</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[3]['Previous'], 2)}</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[3]['Latest'], 2)}</td>
+                    <td style="{Security_style}; {td_style}">{"%.2f" % round(combined.iloc[3]['Change'], 2)}</td>
                 </tr>
                 <tr>
-                    <td>Transferability</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[4]['Previous'], 2)}</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[4]['Latest'], 2)}</td>
-                    <td class="{Transferability_no_type}">{"%.2f" % round(combined.iloc[4]['Change'], 2)}</td>
+                    <td style="{td_style}">Transferability</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[4]['Previous'], 2)}</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[4]['Latest'], 2)}</td>
+                    <td style="{Transferability_style}; {td_style}">{"%.2f" % round(combined.iloc[4]['Change'], 2)}</td>
                 </tr>
                 <tr>
-                    <td>Changeability</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[5]['Previous'], 2)}</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[5]['Latest'], 2)}</td>
-                    <td class="{Changeability_no_type}">{"%.2f" % round(combined.iloc[5]['Change'], 2)}</td>
+                    <td style="{td_style}">Changeability</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[5]['Previous'], 2)}</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[5]['Latest'], 2)}</td>
+                    <td style="{Changeability_style}; {td_style}">{"%.2f" % round(combined.iloc[5]['Change'], 2)}</td>
                 </tr>
-                <tr>
-                    <td>Documentation</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[6]['Previous'], 2)}</td>
-                    <td class="number">{"%.2f" % round(combined.iloc[6]['Latest'], 2)}</td>
-                    <td class="{Documentation_no_type}">{"%.2f" % round(combined.iloc[6]['Change'], 2)}</td>
+                <tr> 
+                    <td style="{td_style}">Documentation</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[6]['Previous'], 2)}</td>
+                    <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[6]['Latest'], 2)}</td>
+                    <td style="{Documentation_style}; {td_style}">{"%.2f" % round(combined.iloc[6]['Change'], 2)}</td>
                 </tr>
                 """
 
         # it contains data of various fields
         context = {
-            "internal_css": internal_css,
             "application": args.application,
             "snapshot_date": snapshot['date'],
             "prev_snapshot_date": prev_snapshot_date,

@@ -1,7 +1,7 @@
 <html>
 
 <head>
-	{internal_css}
+
 </head>
 
 <body lang=EN-US style='word-wrap:break-word'>
@@ -18,28 +18,27 @@
  </tr>
 </table>
 
-<p class=MsoNormal>Health results for application <b>{application}</b> as of <b>{snapshot_date}</b> are
+<p>Health results for <b>{application}</b> as of <b>{snapshot_date}</b> are
 now accessible, with data spanning from <b>{prev_snapshot_date}</b> until present. </p>
 New critical violations added in current version: <b>{new_critical_viol}</b></p> 
 Total critical violations in current version: <b>{total_critical_viol}</b></p>
 </p>
 Application Health Scores 
 </p>
-<table class="healthTable">
+<table style="width: 50%;border-top: 1px solid black;border-bottom: 1px solid black;">
 	<tr>
-		<th>Health Factor</th>
-		<th width="10%">Previous</th>
-		<th width="10%">Latest</th>
-		<th width="10%">Delta</th>
+		<th style="text-align: left;border-bottom: 1px solid black;">Health Factor</th>
+		<th width="10%" style="text-align: center;border-bottom: 1px solid black;">Previous</th>
+		<th width="10%" style="text-align: center;border-bottom: 1px solid black;">Latest</th>
+		<th width="10%" style="text-align: center;padding-left: 15px;border-bottom: 1px solid black;">Delta</th>
 	</tr>
 	{table_health_score}
 </table>
 
-
-<p class=MsoNormal>For full insights into results, refer to the <a href="http://tag_health_dashboard_url">CAST
+<p>For full insights into results, refer to the <a href="http://tag_health_dashboard_url">CAST
 	Imaging Health</a> or <a href="http://tag_health_dashboard_url">Engineering Dashboards.</a></p>
 
-<p class=MsoNormal>&nbsp;</p>
+<p>&nbsp;</p>
 
 </div>
 
