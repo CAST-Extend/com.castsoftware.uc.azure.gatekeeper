@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
         generate_application_template(combined, args.application, snapshot, prev_snapshot_date, added, total)
 
-        send_email()
+        send_email(args.application)
 
         writer.close()
         log.info(f'{added} new violations added')
