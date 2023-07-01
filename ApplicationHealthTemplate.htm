@@ -1,0 +1,41 @@
+<html> 
+	<body lang=EN-US style='word-wrap:break-word'> 
+		<div class=WordSection1> 
+			<table border=0 cellspacing=0 cellpadding=0 width='100%'> 
+				<tr> 
+					<td width='25%' valign=top> 
+						<img src="cid:image1">
+					</td>	
+  					<td width="75%" style='width:296.5pt;padding:0in 5.4pt 0in 5.4pt'>
+						<h1 class=MsoTitle align=center style='text-align:center'>Application Health Report</h1>
+  					</td>
+ 				</tr>
+			</table>
+
+			<p>Health results for <b>{application}</b> as of <b>{snapshot_date}</b> are
+			now accessible, with data spanning from <b>{prev_snapshot_date}</b> until present. </p>
+			New critical violations added in current version: <b>{new_critical_viol}</b></p> 
+			Total critical violations in current version: <b>{total_critical_viol}</b></p>
+			</p>
+			Application Health Scores 
+			</p>
+			<table style="width: 50%;border-top: 1px solid black;border-bottom: 1px solid black;">
+				<tr>
+					<th style="text-align: left;border-bottom: 1px solid black;">Health Factor</th>
+					<th width="10%" style="text-align: center;border-bottom: 1px solid black;">Previous</th>
+					<th width="10%" style="text-align: center;border-bottom: 1px solid black;">Latest</th>
+					<th width="10%" style="text-align: center;padding-left: 15px;border-bottom: 1px solid black;">Delta</th>
+				</tr>
+				{table_health_score}
+			</table>
+
+			<p>For full insights into results, refer to the <a href="http://tag_health_dashboard_url">CAST
+				Imaging Health</a> or <a href="http://tag_health_dashboard_url">Engineering Dashboards.</a></p>
+
+			<p>&nbsp;</p>
+
+		</div>
+
+	</body>
+
+</html>
