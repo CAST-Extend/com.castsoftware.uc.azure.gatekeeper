@@ -1,0 +1,17 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": ["-r","http://arch-ps-3:8087/rest","-u","admin","-p","admin","-a","testDB","-sender","s.p@castsoftware.com","-reciever","['s.p@castsoftware.com']","-smtp_host","email-smtp.eu-central-1.amazonaws.com","-smtp_port","587","-smtp_user","AKIAZV4FQR23NGDUIIOI","-smtp_pass","BNcNAA8oGY2cl2VRwufb8hgRyAScUVxc0S6e8c1Z+ewP"],
+        }
+    ]
+}
