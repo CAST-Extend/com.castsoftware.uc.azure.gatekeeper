@@ -24,12 +24,12 @@ if __name__ == "__main__":
     parser.add_argument('-u','--user',required=True,help='CAST REST API User Name')
     parser.add_argument('-p','--password',required=True,help='CAST REST API Password')
     parser.add_argument('-a','--application',required=True,help='Application Name')
-    parser.add_argument('-sender','--sender',required=True,help='Sender Email ID')
-    parser.add_argument('-reciever','--reciever',required=True,help='Reciever Email ID List')
-    parser.add_argument('-smtp_host','--smtp_host',required=True,help='SMTP Host URL')
-    parser.add_argument('-smtp_port','--smtp_port',required=True,help='SMTP PORT NUMBER')
-    parser.add_argument('-smtp_user','--smtp_user',required=True,help='SMTP USERNAME')
-    parser.add_argument('-smtp_pass','--smtp_pass',required=True,help='SMTP PASSWORD')
+    # parser.add_argument('-sender','--sender',required=True,help='Sender Email ID')
+    # parser.add_argument('-reciever','--reciever',required=True,help='Reciever Email ID List')
+    # parser.add_argument('-smtp_host','--smtp_host',required=True,help='SMTP Host URL')
+    # parser.add_argument('-smtp_port','--smtp_port',required=True,help='SMTP PORT NUMBER')
+    # parser.add_argument('-smtp_user','--smtp_user',required=True,help='SMTP USERNAME')
+    # parser.add_argument('-smtp_pass','--smtp_pass',required=True,help='SMTP PASSWORD')
 #    parser.add_argument('-f','--healthFactor',required=False,default='60017',help='Health Factor Code')
     parser.add_argument('-o','--output',required=False,help='Output Folder')
 
@@ -117,6 +117,6 @@ if __name__ == "__main__":
 
         log.info(f'{added} new violations added')
 
-        send_email(args.application, args.sender, args.reciever, args.smtp_host, args.smtp_port, args.smtp_user, args.smtp_pass)
+        # send_email(args.application, args.sender, args.reciever, args.smtp_host, args.smtp_port, args.smtp_user, args.smtp_pass)
             
         exit(added)
