@@ -24,6 +24,8 @@ if __name__ == "__main__":
     parser.add_argument('-u','--user',required=True,help='CAST REST API User Name')
     parser.add_argument('-p','--password',required=True,help='CAST REST API Password')
     parser.add_argument('-a','--application',required=True,help='Application Name')
+    parser.add_argument('-html_template_path','--html_template_path',required=True,help='ApplicationHealthTemplate.htm Path')
+    parser.add_argument('-generated_html_path','--generated_html_path',required=True,help='Output Path to store generated HTML file')
     # parser.add_argument('-sender','--sender',required=True,help='Sender Email ID')
     # parser.add_argument('-reciever','--reciever',required=True,help='Reciever Email ID List')
     # parser.add_argument('-smtp_host','--smtp_host',required=True,help='SMTP Host URL')
@@ -113,7 +115,7 @@ if __name__ == "__main__":
             prev_snapshot['date'] = 0
         prev_snapshot_date = prev_snapshot['date']
 
-        generate_application_template(combined, args.application, snapshot, prev_snapshot_date, added, total)
+        generate_application_template(combined, args.application, snapshot, prev_snapshot_date, added, total, args.html_template_path, args.generated_html_path)
 
         log.info(f'{added} new violations added')
 

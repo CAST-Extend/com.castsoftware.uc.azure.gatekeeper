@@ -1,6 +1,6 @@
 import os
 
-def generate_application_template(combined, application, snapshot, prev_snapshot_date, added, total):
+def generate_application_template(combined, application, snapshot, prev_snapshot_date, added, total, html_template_path, generated_html_path):
     table_data = ''
     if not combined.empty:
 
@@ -168,7 +168,7 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
     }
 
     # passing context dictionary data to html file 
-    with open(os.getcwd()+"\ApplicationHealthTemplate.htm", "r") as file:
+    with open(html_template_path+"\ApplicationHealthTemplate.htm", "r") as file:
         html = file.read().format(**context)
-        with open(os.getcwd()+f"\ApplicationHealth_{application}.htm", "w") as file2:
+        with open(generated_html_path+f"\ApplicationHealth_{application}.htm", "w") as file2:
             file2.write(html)

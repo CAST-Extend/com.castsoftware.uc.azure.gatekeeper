@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": false,
-            "args": ["-r","http://arch-ps-3:8087/rest","-u","admin","-p","admin","-a","testDB"],
+            "args": ["-r","http://arch-ps-3:8087/rest","-u","admin","-p","admin","-a","testDB","-html_template_path","C:/GateKeeper Template Folder","-generated_html_path","C:/GateKeeper Template Folder"],
         }
     ]
 }
