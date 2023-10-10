@@ -41,7 +41,8 @@ if __name__ == "__main__":
     aip = AipRestCall(args.restURL, args.user, args.password,log_level=INFO)
     domain_id = aip.get_domain(f'{args.application}_central')
     if domain_id==None:
-        log.error(f'Domain not found: {args.application}')
+        log.info(f'Application not found: {args.application}.')
+        log.info(f'Please validate application - {args.application} in the Engineering Health Dashboard.')
     else:
         total = 0
         added = 0
