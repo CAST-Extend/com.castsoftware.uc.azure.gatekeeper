@@ -25,10 +25,10 @@ if __name__ == "__main__":
     }
 
     parser = ArgumentParser()
-    parser.add_argument('-r','--restURL',required=True,help='CAST REST API URL')
-    parser.add_argument('-u','--user',required=True,help='CAST REST API User Name')
-    parser.add_argument('-p','--password',required=True,help='CAST REST API Password')
-    parser.add_argument('-a','--application',required=True,help='Application Name')
+    # parser.add_argument('-r','--restURL',required=True,help='CAST REST API URL')
+    # parser.add_argument('-u','--user',required=True,help='CAST REST API User Name')
+    # parser.add_argument('-p','--password',required=True,help='CAST REST API Password')
+    parser.add_argument('-app_name','---app_name',required=True,help='Application Name')
     parser.add_argument('-css_host','--css_host',required=True,help='CSS Host')
     parser.add_argument('-css_database','--css_database',required=True,help='CSS Database')
     parser.add_argument('-css_port','--css_port',required=True,help='CSS Port')
@@ -137,7 +137,13 @@ if __name__ == "__main__":
     connection = engine.connect()
     cursor = connection.connection.cursor()
 
-    query = """set search_path=test_recipeportal_central;"""
+    if '.' in args.app_name:
+        args.app_name = args.app_name.replace('.','_')
+
+    if '-' in args.app_name:
+        args.app_name = args.app_name.replace('-','_')
+
+    query = f"""set search_path={args.app_name}_central;"""
     cursor.execute(query)
 
     snapshot_date_query = """select functional_date from dss_snapshots"""
@@ -237,7 +243,7 @@ if __name__ == "__main__":
     cursor.close()
     connection.close()
 
-    generate_application_template(combined, args.application, latest_snapshot_date, previous_snapshot_date, added, total, args.html_template_path, args.generated_html_path)
+    generate_application_template(combined, args.app_name, latest_snapshot_date, previous_snapshot_date, added, total, args.html_template_path, args.generated_html_path)
 
     log.info(f'{added} new violations added')
 
