@@ -34,10 +34,11 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
         else:    
             Changeability_style = "text-align: center; color: red" if combined.iloc[5]['Change'] < 0 else "text-align: center; color:green"
 
-        if combined.iloc[6]['Change'] == 'N/A':
-            Documentation_style = "text-align: center; "
-        else:
-            Documentation_style = "text-align: center; color: red" if combined.iloc[6]['Change'] < 0 else "text-align: center; color:green"
+        # if combined.iloc[6]['Change'] == 'N/A':
+        #     Documentation_style = "text-align: center; "
+        # else:
+        #     Documentation_style = "text-align: center; color: red" if combined.iloc[6]['Change'] < 0 else "text-align: center; color:green"
+        
         td_style = "padding-left: 15px; padding-right: 5px; padding-top: 3px; padding-bottom: 3px; border-bottom: 1px solid #DDDDDD;"
 
 
@@ -71,10 +72,10 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
         else:
             Changeability_prev = "%.2f" % round(combined.iloc[5]['Previous'], 2)
 
-        if combined.iloc[6]['Previous'] == 'N/A':
-            Documentation_prev = combined.iloc[6]['Previous']
-        else:
-            Documentation_prev = "%.2f" % round(combined.iloc[6]['Previous'], 2)
+        # if combined.iloc[6]['Previous'] == 'N/A':
+        #     Documentation_prev = combined.iloc[6]['Previous']
+        # else:
+        #     Documentation_prev = "%.2f" % round(combined.iloc[6]['Previous'], 2)
 
 
         if combined.iloc[0]['Change'] == 'N/A':
@@ -107,10 +108,10 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
         else:
             Changeability_change = "%.2f" % round(combined.iloc[5]['Change'], 2)
 
-        if combined.iloc[6]['Change'] == 'N/A':
-            Documentation_change = combined.iloc[6]['Change']
-        else:
-            Documentation_change = "%.2f" % round(combined.iloc[6]['Change'], 2)
+        # if combined.iloc[6]['Change'] == 'N/A':
+        #     Documentation_change = combined.iloc[6]['Change']
+        # else:
+        #     Documentation_change = "%.2f" % round(combined.iloc[6]['Change'], 2)
 
         table_data =f"""
             <tr>
@@ -149,18 +150,12 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
                 <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[5]['Latest'], 2)}</td>
                 <td style="{Changeability_style}; {td_style}">{Changeability_change}</td>
             </tr>
-            <tr> 
-                <td style="{td_style}">Documentation</td>
-                <td style="text-align: center; {td_style}">{Documentation_prev}</td>
-                <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[6]['Latest'], 2)}</td>
-                <td style="{Documentation_style}; {td_style}">{Documentation_change}</td>
-            </tr>
             """
 
     # it contains data of various fields
     context = {
         "application": application,
-        "snapshot_date": snapshot['date'],
+        "snapshot_date": snapshot,
         "prev_snapshot_date": prev_snapshot_date,
         "new_critical_viol": added,
         "total_critical_viol":total,
