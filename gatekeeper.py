@@ -8,6 +8,7 @@ from datetime import datetime
 
 import pandas as pd
 from sqlalchemy import create_engine
+import psycopg2
 
 from generate_application_template import generate_application_template
 from sendmail import send_email
