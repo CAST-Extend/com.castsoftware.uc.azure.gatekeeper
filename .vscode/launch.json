@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": false,
-            "args": ["-r","http://localhost:8090/rest","-u","admin","-p","admin","-a","test_recipeportal","-css_host","localhost","-css_database","postgres","-css_port","2284","-css_user","operator","-css_password","CastAIP","-html_template_path","C:/GateKeeper Template Folder","-generated_html_path","C:/GateKeeper Template Folder"],
+            "args": ["-app_name","test_recipeportal","-css_host","localhost","-css_database","postgres","-css_port","2284","-css_user","operator","-css_password","CastAIP","-html_template_path","C:/GateKeeper Template Folder","-generated_html_path","C:/GateKeeper Template Folder"],
         }
     ]
 }
