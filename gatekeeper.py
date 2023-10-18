@@ -137,13 +137,15 @@ if __name__ == "__main__":
     connection = engine.connect()
     cursor = connection.connection.cursor()
 
+    app_name = args.app_name
+
     if '.' in args.app_name:
-        args.app_name = args.app_name.replace('.','_')
+        app_name = args.app_name.replace('.','_')
 
     if '-' in args.app_name:
-        args.app_name = args.app_name.replace('-','_')
+        app_name = app_name.replace('-','_')
 
-    query = f"""set search_path={args.app_name}_central;"""
+    query = f"""set search_path={app_name}_central;"""
     cursor.execute(query)
 
     snapshot_date_query = """select functional_date from dss_snapshots"""
