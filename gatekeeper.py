@@ -162,11 +162,15 @@ if __name__ == "__main__":
     # Convert it to the "YYYY-MM-DD" format
     latest_snapshot_date = latest_snapshot_date[0].strftime("%Y-%m-%d")
 
-    # Assuming you have a datetime object like this
-    previous_snapshot_date = snapshot_date_list[-2]
+    if len(snapshot_date_list) == 1:
+        log.info(f'There is no previous snapshot for the application -> {args.app_name}.')
+        exit(0)
+    else:
+        # Assuming you have a datetime object like this
+        previous_snapshot_date = snapshot_date_list[-2]
 
-    # Convert it to the "YYYY-MM-DD" format
-    previous_snapshot_date = previous_snapshot_date[0].strftime("%Y-%m-%d")
+        # Convert it to the "YYYY-MM-DD" format
+        previous_snapshot_date = previous_snapshot_date[0].strftime("%Y-%m-%d")
 
     total_violation_query = """SELECT count(distinct(concat(cvs.diag_id,cvs.object_id)))
     FROM csv_violation_statuses cvs , csv_quality_tree cqt
