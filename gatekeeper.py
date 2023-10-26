@@ -253,6 +253,19 @@ if __name__ == "__main__":
 
     log.info(f'{added} new violations added')
 
+    name = 'status'
+
+    # set value of the variable
+    if added == 0: 
+        value = 'pass'
+    else:
+        value = 'fail'
+
+    # set variable
+    print(f'##vso[task.setvariable variable={name};]{value}')
+
+    print(added) 
+
     # send_email(args.application, args.sender, args.reciever, args.smtp_host, args.smtp_port, args.smtp_user, args.smtp_pass)
         
     exit(added)
