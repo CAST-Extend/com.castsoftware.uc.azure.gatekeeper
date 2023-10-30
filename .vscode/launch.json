@@ -10,8 +10,8 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "justMyCode": false,
-            "args": ["-app_name","test_recipeportal","-css_host","localhost","-css_database","postgres","-css_port","2284","-css_user","operator","-css_password","CastAIP","-html_template_path","C:/GateKeeper Template Folder","-generated_html_path","C:/GateKeeper Template Folder"],
+            "justMyCode": true,
+            "args": ["-app_name","test_recipeportal", "-console_url", "http://localhost:8081", "-console_api_key", "2wuWWoWz.JBsiEJ40V8ebKjyQyeeFQ2tZRhN6Ai3V", "-css_host", "localhost", "-css_database", "postgres", "-css_port", "2284", "-css_user", "operator", "-css_password", "CastAIP", "-html_template_path", "C:/GateKeeper Template Folder", "-generated_html_path", "C:/GateKeeper Template Folder"],
         }
     ]
 }

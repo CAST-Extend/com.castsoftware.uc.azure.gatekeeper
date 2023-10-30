@@ -1,17 +1,70 @@
-from cast_common.aipRestCall import AipRestCall
+import json
+# from cast_common.aipRestCall import AipRestCall
 from cast_common.logger import Logger,INFO
-from cast_common.util import format_table
-from pandas import ExcelWriter, Series,merge,options, DataFrame
+# from cast_common.util import format_table
+# from pandas import ExcelWriter, Series,merge,options, DataFrame
 from argparse import ArgumentParser
-from os.path import abspath,exists
-from datetime import datetime
+# from os.path import abspath,exists
+# from datetime import datetime
 
 import pandas as pd
+import requests
 from sqlalchemy import create_engine
-import psycopg2
+# import psycopg2
 
 from generate_application_template import generate_application_template
-from sendmail import send_email
+# from sendmail import send_email
+
+def get_application_guid(console_url, console_api_key, app_name):
+    url=f"{console_url}/api/applications"
+    headers = {
+        "x-api-key": console_api_key
+    }
+
+    try:
+        #fetching the Application list and details.
+        rsp = requests.get(url, headers=headers)
+        # print(rsp.status_code)
+        if rsp.status_code == 200:
+            apps = json.loads(rsp.text) 
+            for app in apps['applications']:
+                if app["name"] == app_name:
+                    return app["guid"] 
+            print(f'{app_name} application not present in AIP Console')
+
+        else:
+            print("Some error has occured! ")
+            print(rsp.text)
+
+    except Exception as e:
+        print('some exception has occured! \n Please resolve them or contact developers')
+        print(e)
+
+def get_central_schema(console_url, console_api_key, guid):
+    url=f"{console_url}/api/aic/applications/{guid}"
+    headers = {
+        "x-api-key": console_api_key
+    }
+
+    try:
+        #fetching the app schemas.
+        rsp = requests.get(url, headers=headers)
+        # print(rsp.status_code)
+        if rsp.status_code == 200:
+            data = json.loads(rsp.text) 
+
+            for i in range(len(data["schemas"])):
+                if data["schemas"][i]["type"] == 'central':
+                    return data["schemas"][i]["name"]
+
+        else:
+            print("Some error has occured! ")
+            print(rsp.text)
+
+    except Exception as e:
+        print('some exception has occured! \n Please resolve them or contact developers')
+        print(e)
+
 
 if __name__ == "__main__":
 
@@ -29,6 +82,8 @@ if __name__ == "__main__":
     # parser.add_argument('-u','--user',required=True,help='CAST REST API User Name')
     # parser.add_argument('-p','--password',required=True,help='CAST REST API Password')
     parser.add_argument('-app_name','---app_name',required=True,help='Application Name')
+    parser.add_argument('-console_url', '--console_url', required=True, help='AIP Console URL')
+    parser.add_argument('-console_api_key', '--console_api_key', required=True, help='AIP Console API KEY')
     parser.add_argument('-css_host','--css_host',required=True,help='CSS Host')
     parser.add_argument('-css_database','--css_database',required=True,help='CSS Database')
     parser.add_argument('-css_port','--css_port',required=True,help='CSS Port')
@@ -47,6 +102,9 @@ if __name__ == "__main__":
 
     args=parser.parse_args()
     log = Logger()
+
+    guid = get_application_guid(args.console_url, args.console_api_key, args.app_name)
+    central_schema = get_central_schema(args.console_url, args.console_api_key, guid)
 
     # aip = AipRestCall(args.restURL, args.user, args.password,log_level=INFO)
     # domain_id = aip.get_domain(f'{args.application}_central')
@@ -137,15 +195,15 @@ if __name__ == "__main__":
     connection = engine.connect()
     cursor = connection.connection.cursor()
 
-    app_name = args.app_name
+    # app_name = args.app_name
 
-    if '.' in args.app_name:
-        app_name = args.app_name.replace('.','_')
+    # if '.' in args.app_name:
+    #     app_name = args.app_name.replace('.','_')
 
-    if '-' in args.app_name:
-        app_name = app_name.replace('-','_')
+    # if '-' in args.app_name:
+    #     app_name = app_name.replace('-','_')
 
-    query = f"""set search_path={app_name}_central;"""
+    query = f"""set search_path={central_schema};"""
     cursor.execute(query)
 
     snapshot_date_query = """select functional_date from dss_snapshots"""
@@ -199,6 +257,34 @@ if __name__ == "__main__":
     added = cursor.fetchall()
 
     added = added[0][0]
+
+
+    # Define your SQL query
+    violations_query = """SELECT cvs.diag_id , cvs.diag_name,cvs.object_id,cvs.object_name,cvs.violation_status
+    FROM csv_violation_statuses cvs , csv_quality_tree cqt
+    WHERE cqt.metric_id = diag_id and m_crit =1
+    AND cvs.snaphot_id IN (SELECT max (snapshot_id ) FROM dss_snapshots) AND cvs.violation_status='Added'"""
+
+    cursor.execute(violations_query)
+
+    # Fetch the result into a DataFrame
+    violations_df = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
+
+    # Drop the specified columns
+    columns_to_drop = ['diag_id', 'object_id']
+    violations_df = violations_df.drop(columns=columns_to_drop)
+
+    new_column = {'diag_name':'Violation Name', 'object_name':'Object Name', 'violation_status':'Violation Status'}
+    violations_df = violations_df.rename(columns=new_column)
+
+    # Define the output Excel file path
+    excel_file_path = args.generated_html_path + f"\ApplicationHealth_{args.app_name}.xlsx"
+
+    # Write the data to an Excel sheet
+    violations_df.to_excel(excel_file_path, sheet_name="violations", index=False)
+
+    print(f"Violations data has been exported to {excel_file_path}")
+
 
     # Define your SQL query
     sql_query = """/*
