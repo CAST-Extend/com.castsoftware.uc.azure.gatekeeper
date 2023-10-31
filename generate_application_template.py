@@ -118,37 +118,37 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
                 <td style="{td_style}">TQI</td>
                 <td style="text-align: center; {td_style}">{TQI_prev}</td>
                 <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[0]['Latest'], 2)}</td>
-                <td style="{TQI_style}; {td_style}">{TQI_change}</td>
+                <td style="{TQI_style}; {td_style}">{TQI_change}%</td>
             </tr>
             <tr>
                 <td style="{td_style}">Robustness</td>
                 <td style="text-align: center; {td_style}">{Robustness_prev}</td>
                 <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[1]['Latest'], 2)}</td>
-                <td style="{Robustness_style}; {td_style}">{Robustness_change}</td>
+                <td style="{Robustness_style}; {td_style}">{Robustness_change}%</td>
             </tr>
             <tr>
                 <td style="{td_style}">Efficiency</td>
                 <td style="text-align: center; {td_style}">{Efficiency_prev}</td>
                 <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[2]['Latest'], 2)}</td>
-                <td style="{Efficiency_style}; {td_style}">{Efficiency_change}</td>
+                <td style="{Efficiency_style}; {td_style}">{Efficiency_change}%</td>
             </tr>
             <tr>
                 <td style="{td_style}">Security</td>
                 <td style="text-align: center; {td_style}">{Security_prev}</td>
                 <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[3]['Latest'], 2)}</td>
-                <td style="{Security_style}; {td_style}">{Security_change}</td>
+                <td style="{Security_style}; {td_style}">{Security_change}%</td>
             </tr>
             <tr>
                 <td style="{td_style}">Transferability</td>
                 <td style="text-align: center; {td_style}">{Transferability_prev}</td>
                 <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[4]['Latest'], 2)}</td>
-                <td style="{Transferability_style}; {td_style}">{Transferability_change}</td>
+                <td style="{Transferability_style}; {td_style}">{Transferability_change}%</td>
             </tr>
             <tr>
                 <td style="{td_style}">Changeability</td>
                 <td style="text-align: center; {td_style}">{Changeability_prev}</td>
                 <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[5]['Latest'], 2)}</td>
-                <td style="{Changeability_style}; {td_style}">{Changeability_change}</td>
+                <td style="{Changeability_style}; {td_style}">{Changeability_change}%</td>
             </tr>
             """
 
