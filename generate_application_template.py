@@ -193,7 +193,8 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
             "prev_snapshot_date": prev_snapshot_date,
             "new_critical_viol": added,
             "total_critical_viol": total,
-            "table_health_score": table_data
+            "table_health_score": table_data,
+            "added_critical_violations_insight": ''
         }
 
     # passing context dictionary data to html file 
