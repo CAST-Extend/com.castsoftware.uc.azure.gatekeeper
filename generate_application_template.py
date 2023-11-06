@@ -1,6 +1,7 @@
 import os
+from bs4 import BeautifulSoup
 
-def generate_application_template(combined, application, snapshot, prev_snapshot_date, added, total, html_template_path, generated_html_path):
+def generate_application_template(combined, application, snapshot, prev_snapshot_date, added, total, html_template_path, generated_html_path, violations_df_for_html):
     table_data = ''
     if not combined.empty:
 
@@ -152,15 +153,48 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
             </tr>
             """
 
-    # it contains data of various fields
-    context = {
-        "application": application,
-        "snapshot_date": snapshot,
-        "prev_snapshot_date": prev_snapshot_date,
-        "new_critical_viol": added,
-        "total_critical_viol":total,
-        "table_health_score":table_data
-    }
+    added_critical_violations = """<p> Added Critical Violations Insight </p>
+			<table id="dataframe-table" style="width: 80%;border-top: 1px solid black;border-bottom: 1px solid black;">
+				<tr>
+					<th style="text-align: left;border-bottom: 1px solid black;">Violation Name</th>
+					<th style="text-align: center;border-bottom: 1px solid black;">Object Name</th>
+				</tr>
+                <tbody>
+                    <!-- Data will be added here -->
+                </tbody>
+			</table> """
+    
+    # Create a BeautifulSoup object to parse the HTML
+    soup = BeautifulSoup(added_critical_violations, 'html.parser')
+
+    # Find the table element where you want to add the data
+    table = soup.find('table', {'id': 'dataframe-table'})
+    
+    # Iterate through the DataFrame rows and add them to the table
+    for index, row in violations_df_for_html.iterrows():
+        table.tbody.append(BeautifulSoup(f"<tr><td>{row['Violation Name']}</td><td>{row['Object Name']}</td></tr>", 'html.parser'))
+
+    if added > 0:
+        # it contains data of various fields
+        context = {
+            "application": application,
+            "snapshot_date": snapshot,
+            "prev_snapshot_date": prev_snapshot_date,
+            "new_critical_viol": added,
+            "total_critical_viol": total,
+            "table_health_score": table_data,
+            "added_critical_violations_insight": str(soup)
+        }
+    else:
+        # it contains data of various fields
+        context = {
+            "application": application,
+            "snapshot_date": snapshot,
+            "prev_snapshot_date": prev_snapshot_date,
+            "new_critical_viol": added,
+            "total_critical_viol": total,
+            "table_health_score": table_data
+        }
 
     # passing context dictionary data to html file 
     with open(html_template_path+"\ApplicationHealthTemplate.htm", "r") as file:

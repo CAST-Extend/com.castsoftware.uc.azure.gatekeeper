@@ -1,19 +1,10 @@
 import json
-# from cast_common.aipRestCall import AipRestCall
-from cast_common.logger import Logger,INFO
-# from cast_common.util import format_table
-# from pandas import ExcelWriter, Series,merge,options, DataFrame
 from argparse import ArgumentParser
-# from os.path import abspath,exists
-# from datetime import datetime
-
 import pandas as pd
 import requests
 from sqlalchemy import create_engine
-# import psycopg2
-
 from generate_application_template import generate_application_template
-# from sendmail import send_email
+import psycopg2
 
 def get_application_guid(console_url, console_api_key, app_name):
     url=f"{console_url}/api/applications"
@@ -68,19 +59,8 @@ def get_central_schema(console_url, console_api_key, guid):
 
 if __name__ == "__main__":
 
-    measures = {
-        '60017':'TQI',
-        '60013':'Robustness',
-        '60014':'Efficiency',
-        '60016':'Security',
-        '60011':'Transferability',
-        '60012':'Changeability'
-    }
-
     parser = ArgumentParser()
-    # parser.add_argument('-r','--restURL',required=True,help='CAST REST API URL')
-    # parser.add_argument('-u','--user',required=True,help='CAST REST API User Name')
-    # parser.add_argument('-p','--password',required=True,help='CAST REST API Password')
+ 
     parser.add_argument('-app_name','---app_name',required=True,help='Application Name')
     parser.add_argument('-console_url', '--console_url', required=True, help='AIP Console URL')
     parser.add_argument('-console_api_key', '--console_api_key', required=True, help='AIP Console API KEY')
@@ -91,100 +71,15 @@ if __name__ == "__main__":
     parser.add_argument('-css_password','--css_password',required=True,help='CSS Pasword')
     parser.add_argument('-html_template_path','--html_template_path',required=True,help='ApplicationHealthTemplate.htm Path')
     parser.add_argument('-generated_html_path','--generated_html_path',required=True,help='Output Path to store generated HTML file')
-    # parser.add_argument('-sender','--sender',required=True,help='Sender Email ID')
-    # parser.add_argument('-reciever','--reciever',required=True,help='Reciever Email ID List')
-    # parser.add_argument('-smtp_host','--smtp_host',required=True,help='SMTP Host URL')
-    # parser.add_argument('-smtp_port','--smtp_port',required=True,help='SMTP PORT NUMBER')
-    # parser.add_argument('-smtp_user','--smtp_user',required=True,help='SMTP USERNAME')
-    # parser.add_argument('-smtp_pass','--smtp_pass',required=True,help='SMTP PASSWORD')
-#    parser.add_argument('-f','--healthFactor',required=False,default='60017',help='Health Factor Code')
     parser.add_argument('-o','--output',required=False,help='Output Folder')
 
     args=parser.parse_args()
-    log = Logger()
+
+    print('Checking if there are new critical violations added in this version.............')
 
     guid = get_application_guid(args.console_url, args.console_api_key, args.app_name)
     central_schema = get_central_schema(args.console_url, args.console_api_key, guid)
 
-    # aip = AipRestCall(args.restURL, args.user, args.password,log_level=INFO)
-    # domain_id = aip.get_domain(f'{args.application}_central')
-    # if domain_id==None:
-    #     log.info(f'Application not found: {args.application}.')
-    #     log.info(f'Please validate application - {args.application} in the Engineering Health Dashboard.')
-    # else:
-    #     total = 0
-    #     added = 0
-    #     snapshot = aip.get_latest_snapshot(domain_id)
-    #     if not bool(snapshot):
-    #         log.error(f'No snapshots found: {args.application}')
-    #         exit (-1)
-    #     snapshot_id = snapshot['id']
-
-    #     base='./'
-    #     if not args.output is None:
-    #         base = args.output
-
-    #     s = datetime.now().strftime("%Y%m%d-%H%M%S")
-    #     file_name = abspath(f'{base}/violations-{args.application}-{s}.xlsx')
-    #     writer = ExcelWriter(file_name, engine='xlsxwriter')
-
-    #     first=True
-    #     for code in measures:
-    #         name = measures[code]
-    #         df=aip.get_rules(domain_id,snapshot_id,code,critical=True,non_critical=False,start_row=1,max_rows=999999)
-    #         if not df.empty:
-    #             if first:
-    #                 total=len(df)
-                    
-    #             df=df.loc[df['diagnosis.status'] == 'added']
-
-    #             if first:
-    #                 added=len(df)
-
-    #             detail_df = df[['component.name','component.shortName','rulePattern.name','rulePattern.critical']]
-    #             detail_df = detail_df.rename(columns={'component.name':'Component Name','component.shortName':'Component Short Name','rulePattern.name':'Rule','rulePattern.critical':'Critical'})
-    #             first=False
-
-    #             if not detail_df.empty:
-    #                 format_table(writer,detail_df,name,[120,50,75,10])
-
-    #     combined = DataFrame()
-    #     prev_snapshot = aip.get_prev_snapshot(domain_id)
-    #     if bool(prev_snapshot):
-    #         new_grades = aip.get_grades_by_technology(domain_id,snapshot)
-    #         unwanted=new_grades.columns[new_grades.columns.str.startswith('ISO')]
-    #         new_grades=new_grades.drop(unwanted,axis=1).transpose()[['All']].rename(columns={'All':'Latest'})
-            
-    #         old_grades = aip.get_grades_by_technology(domain_id,prev_snapshot).drop(unwanted,axis=1).transpose()[['All']].rename(columns={'All':'Previous'})
-
-    #         combined = merge(old_grades,new_grades,left_index=True,right_index=True).reset_index()
-    #         combined['Change'] = combined[['Previous', 'Latest']].pct_change(axis=1)['Latest']
-    #         format_table(writer,combined,'Grades',[50,10,10,10])
-    #     else:
-    #         new_grades = aip.get_grades_by_technology(domain_id,snapshot)
-    #         unwanted=new_grades.columns[new_grades.columns.str.startswith('ISO')]
-    #         new_grades=new_grades.drop(unwanted,axis=1).transpose()[['All']].rename(columns={'All':'Latest'})
-
-    #         data = {
-    #         "Previous": ['N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A']
-    #         }
-
-    #         old_grades = DataFrame(data, index =  ['TQI', 'Robustness', 'Efficiency', 'Security', 'Transferability', 'Changeability', 'Documentation'])
-
-    #         #load data into a DataFrame object:
-    #         combined = merge(old_grades,new_grades,left_index=True,right_index=True).reset_index()
-
-    #         combined['Change'] = ['N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A', 'N/A']
-    #         format_table(writer,combined,'Grades',[50,10,10,10])
-
-    #     writer.close()
-
-    #     #if application does not contains previous snapshot then prev_snapshot['date'] = 0
-    #     if len(prev_snapshot) == 0:
-    #         prev_snapshot['date'] = 0
-    #     prev_snapshot_date = prev_snapshot['date']
-
-    #     print(combined)
 
     db_uri = f"postgresql://{args.css_user}:{args.css_password}@{args.css_host}:{args.css_port}/{args.css_database}"
 
@@ -194,14 +89,6 @@ if __name__ == "__main__":
     # Create a connection and a cursor
     connection = engine.connect()
     cursor = connection.connection.cursor()
-
-    # app_name = args.app_name
-
-    # if '.' in args.app_name:
-    #     app_name = args.app_name.replace('.','_')
-
-    # if '-' in args.app_name:
-    #     app_name = app_name.replace('-','_')
 
     query = f"""set search_path={central_schema};"""
     cursor.execute(query)
@@ -221,7 +108,7 @@ if __name__ == "__main__":
     latest_snapshot_date = latest_snapshot_date[0].strftime("%Y-%m-%d")
 
     if len(snapshot_date_list) == 1:
-        log.info(f'There is no previous snapshot for the application -> {args.app_name}.')
+        print(f'There is no previous snapshot for the application -> {args.app_name}.')
         exit(0)
     else:
         # Assuming you have a datetime object like this
@@ -260,7 +147,7 @@ if __name__ == "__main__":
 
 
     # Define your SQL query
-    violations_query = """SELECT cvs.diag_id , cvs.diag_name,cvs.object_id,cvs.object_name,cvs.violation_status
+    violations_query = """SELECT distinct cvs.diag_name,cvs.object_name,cvs.violation_status
     FROM csv_violation_statuses cvs , csv_quality_tree cqt
     WHERE cqt.metric_id = diag_id and m_crit =1
     AND cvs.snaphot_id IN (SELECT max (snapshot_id ) FROM dss_snapshots) AND cvs.violation_status='Added'"""
@@ -271,8 +158,8 @@ if __name__ == "__main__":
     violations_df = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
 
     # Drop the specified columns
-    columns_to_drop = ['diag_id', 'object_id']
-    violations_df = violations_df.drop(columns=columns_to_drop)
+    #columns_to_drop = ['diag_id', 'object_id']
+    #violations_df = violations_df.drop(columns=columns_to_drop)
 
     new_column = {'diag_name':'Violation Name', 'object_name':'Object Name', 'violation_status':'Violation Status'}
     violations_df = violations_df.rename(columns=new_column)
@@ -284,6 +171,15 @@ if __name__ == "__main__":
     violations_df.to_excel(excel_file_path, sheet_name="violations", index=False)
 
     print(f"Violations data has been exported to {excel_file_path}")
+
+	# Drop the specified columns
+    columns_to_drop = ['Violation Status']
+    violations_df_for_html = violations_df.drop(columns=columns_to_drop)
+    # print(violations_df_for_html)
+
+    # data = {'Violation Name': ['Avoid comparing passwords against hard-coded strings Avoid comparing passwords against hard-coded strings Avoid comparing passwords against hard-coded strings'],
+    #         'Object Name': ['FSL.MyProjectHQ.CrewHQ.API.Startup.ConfigureServices']}
+    # violations_df_for_html = pd.DataFrame(data)
 
 
     # Define your SQL query
@@ -334,24 +230,20 @@ if __name__ == "__main__":
     # Close the cursor and connection
     cursor.close()
     connection.close()
-
-    generate_application_template(combined, args.app_name, latest_snapshot_date, previous_snapshot_date, added, total, args.html_template_path, args.generated_html_path)
-
-    log.info(f'{added} new violations added')
-
-    name = 'status'
-
     # set value of the variable
+    #log.info(f'{added} new violations added')
     if added == 0: 
         value = 'pass'
+        print('Info : As no added critical violations found. The build will pass.')
     else:
         value = 'fail'
+        print(f"Info : {added} added critical violations found. Please investigate/fix the violation before merge. The build will fail") 
 
+
+    generate_application_template(combined, args.app_name, latest_snapshot_date, previous_snapshot_date, added, total, args.html_template_path, args.generated_html_path, violations_df_for_html)
+
+    name = 'violations'    
     # set variable
     print(f'##vso[task.setvariable variable={name};]{value}')
 
-    print(added) 
-
-    # send_email(args.application, args.sender, args.reciever, args.smtp_host, args.smtp_port, args.smtp_user, args.smtp_pass)
-        
     exit(added)
