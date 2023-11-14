@@ -156,8 +156,14 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
     added_critical_violations = """<p> Added Critical Violations Insight </p>
 			<table id="dataframe-table" style="width: 80%;border-top: 1px solid black;border-bottom: 1px solid black;">
 				<tr>
-					<th style="text-align: left;border-bottom: 1px solid black;">Violation Name</th>
-					<th style="text-align: center;border-bottom: 1px solid black;">Object Name</th>
+					<th style="text-align: left;border-bottom: 1px solid black;">Rule ID</th>
+					<th style="text-align: left;border-bottom: 1px solid black;">Rule Name</th>
+                    <th style="text-align: left;border-bottom: 1px solid black;">Object Name</th>
+					<th style="text-align: left;border-bottom: 1px solid black;">File Path</th>
+					<th style="text-align: left;border-bottom: 1px solid black;">Start Line</th>
+					<th style="text-align: left;border-bottom: 1px solid black;">End Line</th>
+					<th style="text-align: left;border-bottom: 1px solid black;">Violation Status</th>
+
 				</tr>
                 <tbody>
                     <!-- Data will be added here -->

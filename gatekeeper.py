@@ -147,10 +147,35 @@ if __name__ == "__main__":
 
 
     # Define your SQL query
-    violations_query = """SELECT distinct cvs.diag_name,cvs.object_name,cvs.violation_status
-    FROM csv_violation_statuses cvs , csv_quality_tree cqt
-    WHERE cqt.metric_id = diag_id and m_crit =1
-    AND cvs.snaphot_id IN (SELECT max (snapshot_id ) FROM dss_snapshots) AND cvs.violation_status='Added'"""
+    # violations_query = """SELECT distinct cvs.diag_name,cvs.object_name,cvs.violation_status
+    # FROM csv_violation_statuses cvs , csv_quality_tree cqt
+    # WHERE cqt.metric_id = diag_id and m_crit =1
+    # AND cvs.snaphot_id IN (SELECT max (snapshot_id ) FROM dss_snapshots) AND cvs.violation_status='Added'"""
+
+    violations_query = """SELECT
+           cvs.diag_id "Rule_ID", 
+           cvs.diag_name "Rule_Name",
+           --cvs.object_id,
+           cvs.object_name,
+           dst.source_path "File_Path",
+           dcb.start_line,
+           dcb.end_line, 
+           cvs.violation_status
+    FROM 
+     	csv_violation_statuses cvs , 
+     	csv_quality_tree cqt,
+    	dss_metric_results dmr
+    	left join dss_code_bookmarks dcb on dcb.position_id = dmr.position_id 
+    			and dcb.object_id = dmr.object_id 
+    	join dss_source_texts dst on dcb.local_source_id = dst.local_source_id 
+    WHERE 
+        cqt.metric_id = diag_id and m_crit =1 and cqt.b_criterion_id = 60017
+    and cvs.snaphot_id IN (SELECT max (snapshot_id ) FROM dss_snapshots)
+    and cqt.metric_id = dmr.metric_id -1 
+    and cvs.snaphot_id = dmr.snapshot_id 
+    and cvs.object_id = dmr.object_id 
+    AND cvs.violation_status='Added'
+    and dcb."rank" = 1"""
 
     cursor.execute(violations_query)
 
@@ -161,7 +186,8 @@ if __name__ == "__main__":
     #columns_to_drop = ['diag_id', 'object_id']
     #violations_df = violations_df.drop(columns=columns_to_drop)
 
-    new_column = {'diag_name':'Violation Name', 'object_name':'Object Name', 'violation_status':'Violation Status'}
+    new_column = {'Rule_ID':'Rule ID', 'Rule_Name':'Rule Name', 'object_name':'Object Name', 'File_Path':'File Path', 'start_line':'Start Line', 'end_line':'End Line', 'violation_status':'Violation Status'}
+
     violations_df = violations_df.rename(columns=new_column)
 
     # Define the output Excel file path
@@ -173,8 +199,8 @@ if __name__ == "__main__":
     print(f"Violations data has been exported to {excel_file_path}")
 
 	# Drop the specified columns
-    columns_to_drop = ['Violation Status']
-    violations_df_for_html = violations_df.drop(columns=columns_to_drop)
+    # columns_to_drop = ['Violation Status']
+    # violations_df_for_html = violations_df.drop(columns=columns_to_drop)
     # print(violations_df_for_html)
 
     # data = {'Violation Name': ['Avoid comparing passwords against hard-coded strings Avoid comparing passwords against hard-coded strings Avoid comparing passwords against hard-coded strings'],
@@ -240,7 +266,7 @@ if __name__ == "__main__":
         print(f"Info : {added} added critical violations found. Please investigate/fix the violation before merge. The build will fail") 
 
 
-    generate_application_template(combined, args.app_name, latest_snapshot_date, previous_snapshot_date, added, total, args.html_template_path, args.generated_html_path, violations_df_for_html)
+    generate_application_template(combined, args.app_name, latest_snapshot_date, previous_snapshot_date, added, total, args.html_template_path, args.generated_html_path, violations_df)
 
     name = 'violations'    
     # set variable
