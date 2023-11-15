@@ -1,7 +1,7 @@
 import os
 from bs4 import BeautifulSoup
 
-def generate_application_template(combined, application, snapshot, prev_snapshot_date, added, total, html_template_path, generated_html_path, violations_df_for_html):
+def generate_application_template(combined, application, snapshot, prev_snapshot_date, added, total, html_template_path, generated_html_path, violations_data):
     table_data = ''
     if not combined.empty:
 
@@ -154,16 +154,9 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
             """
 
     added_critical_violations = """<p> Added Critical Violations Insight </p>
-			<table id="dataframe-table" style="width: 80%;border-top: 1px solid black;border-bottom: 1px solid black;">
+			<table id="dataframe-table" style="width: 100%;border-top: 1px solid black;border-bottom: 1px solid black;">
 				<tr>
-					<th style="text-align: left;border-bottom: 1px solid black;">Rule ID</th>
-					<th style="text-align: left;border-bottom: 1px solid black;">Rule Name</th>
-                    <th style="text-align: left;border-bottom: 1px solid black;">Object Name</th>
-					<th style="text-align: left;border-bottom: 1px solid black;">File Path</th>
-					<th style="text-align: left;border-bottom: 1px solid black;">Start Line</th>
-					<th style="text-align: left;border-bottom: 1px solid black;">End Line</th>
-					<th style="text-align: left;border-bottom: 1px solid black;">Violation Status</th>
-
+					<th style="text-align: left;border-bottom: 1px solid black;">Violation(s)</th>
 				</tr>
                 <tbody>
                     <!-- Data will be added here -->
@@ -177,8 +170,13 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
     table = soup.find('table', {'id': 'dataframe-table'})
     
     # Iterate through the DataFrame rows and add them to the table
-    for index, row in violations_df_for_html.iterrows():
-        table.tbody.append(BeautifulSoup(f"<tr><td>{row['Violation Name']}</td><td>{row['Object Name']}</td></tr>", 'html.parser'))
+    for index,row in enumerate(violations_data):
+        if index + 1 < len(violations_data):
+            table.tbody.append(BeautifulSoup(f"<tr><td>{row['Rule ID']} - {row['Rule Name']} <br> <b>Object: </b> {row['Object Name']} <br> <b>Filename: </b> {row['File Path']} <br> <b>Line #: </b> {row['Start Line']} <br> <hr style='border-top: 1px dashed navy' /> </td></tr>", 'html.parser'))
+        else:
+            table.tbody.append(BeautifulSoup(f"<tr><td>{row['Rule ID']} - {row['Rule Name']} <br> <b>Object: </b> {row['Object Name']} <br> <b>Filename: </b> {row['File Path']} <br> <b>Line #: </b> {row['Start Line']} </td></tr>", 'html.parser'))
+
+        
 
     if added > 0:
         # it contains data of various fields

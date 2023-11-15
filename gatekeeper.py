@@ -265,8 +265,10 @@ if __name__ == "__main__":
         value = 'fail'
         print(f"Info : {added} added critical violations found. Please investigate/fix the violation before merge. The build will fail") 
 
+    
+    violations_data = violations_df.to_dict(orient='records')
 
-    generate_application_template(combined, args.app_name, latest_snapshot_date, previous_snapshot_date, added, total, args.html_template_path, args.generated_html_path, violations_df)
+    generate_application_template(combined, args.app_name, latest_snapshot_date, previous_snapshot_date, added, total, args.html_template_path, args.generated_html_path, violations_data)
 
     name = 'violations'    
     # set variable
