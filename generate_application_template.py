@@ -1,7 +1,7 @@
 import os
 from bs4 import BeautifulSoup
 
-def generate_application_template(combined, application, snapshot, prev_snapshot_date, added, total, html_template_path, generated_html_path, violations_data):
+def generate_application_template(combined, application, snapshot, prev_snapshot_date, added, total, html_template_path, generated_html_path, violations_data, PrInfo):
     table_data = ''
     if not combined.empty:
 
@@ -176,30 +176,52 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
         else:
             table.tbody.append(BeautifulSoup(f"<tr><td>{row['Rule ID']} - {row['Rule Name']} <br> <b>Object: </b> {row['Object Name']} <br> <b>Filename: </b> {row['File Path']} <br> <b>Line #: </b> {row['Start Line']} </td></tr>", 'html.parser'))
 
-        
+    complete_PRs = """<p> Completed PRs </p>
+			<table id="dataframe-table" style="width: 100%;border-top: 1px solid black;border-bottom: 1px solid black;">
+				<tr>
+					<th style="text-align: left;border-bottom: 1px solid black;">PR Details</th>
+				</tr>
+                <tbody>
+                    <!-- Data will be added here -->
+                </tbody>
+			</table> """
+    
+    # Create a BeautifulSoup object to parse the HTML
+    soup_2 = BeautifulSoup(complete_PRs, 'html.parser')
+
+    # Find the table element where you want to add the data
+    table_2 = soup_2.find('table', {'id': 'dataframe-table'})
+    
+    # Iterate through the DataFrame rows and add them to the table
+    count = 0
+    for item in PrInfo:
+        if count + 1 < len(PrInfo):
+            count += 1
+            table_2.tbody.append(BeautifulSoup(f"<tr><td> <b>PR ID: </b> {item['PullRequestId']} <br> <b>PR Status: </b> {item['Status']} <br> <b>PR Source Branch: </b> {item['SourceBranch']} <br> <b>PR Created By: </b> {item['CreatedBy']} <br> <b>Reviewers that Approved: </b> {item['Reviewers']}<br> <b>Created Date: </b> {item['CreatedDate']['DateTime']}<br><b>Closed Date: </b> {item['ClosedDate']['DateTime']}<br><b>PR URL: </b> {item['PrURL']}<br> <hr style='border-top: 1px dashed navy' /> </td></tr>", 'html.parser'))
+        else:
+            table_2.tbody.append(BeautifulSoup(f"<tr><td> <b>PR ID: </b> {item['PullRequestId']} <br> <b>PR Status: </b> {item['Status']} <br> <b>PR Source Branch: </b> {item['SourceBranch']} <br> <b>PR Created By: </b> {item['CreatedBy']} <br> <b>Reviewers that Approved: </b> {item['Reviewers']}<br> <b>Created Date: </b> {item['CreatedDate']['DateTime']}<br><b>Closed Date: </b> {item['ClosedDate']['DateTime']}<br><b>PR URL: </b> {item['PrURL']} </td></tr>", 'html.parser'))
+
+    context = {
+        "application": application,
+        "snapshot_date": snapshot,
+        "prev_snapshot_date": prev_snapshot_date,
+        "new_critical_viol": added,
+        "total_critical_viol": total,
+        "table_health_score": table_data
+    }    
 
     if added > 0:
         # it contains data of various fields
-        context = {
-            "application": application,
-            "snapshot_date": snapshot,
-            "prev_snapshot_date": prev_snapshot_date,
-            "new_critical_viol": added,
-            "total_critical_viol": total,
-            "table_health_score": table_data,
-            "added_critical_violations_insight": str(soup)
-        }
+        context["added_critical_violations_insight"] = str(soup)
     else:
         # it contains data of various fields
-        context = {
-            "application": application,
-            "snapshot_date": snapshot,
-            "prev_snapshot_date": prev_snapshot_date,
-            "new_critical_viol": added,
-            "total_critical_viol": total,
-            "table_health_score": table_data,
-            "added_critical_violations_insight": ''
-        }
+        context["added_critical_violations_insight"] = ''
+
+    if len(PrInfo) > 0:
+        context["complete_PRs"] = str(soup_2)
+    else:
+        context["complete_PRs"] = ''
+        
 
     # passing context dictionary data to html file 
     with open(html_template_path+"\ApplicationHealthTemplate.htm", "r") as file:

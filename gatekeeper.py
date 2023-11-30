@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     parser = ArgumentParser()
  
-    parser.add_argument('-app_name','---app_name',required=True,help='Application Name')
+    parser.add_argument('-app_name','--app_name',required=True,help='Application Name')
     parser.add_argument('-console_url', '--console_url', required=True, help='AIP Console URL')
     parser.add_argument('-console_api_key', '--console_api_key', required=True, help='AIP Console API KEY')
     parser.add_argument('-css_host','--css_host',required=True,help='CSS Host')
@@ -72,8 +72,66 @@ if __name__ == "__main__":
     parser.add_argument('-html_template_path','--html_template_path',required=True,help='ApplicationHealthTemplate.htm Path')
     parser.add_argument('-generated_html_path','--generated_html_path',required=True,help='Output Path to store generated HTML file')
     parser.add_argument('-o','--output',required=False,help='Output Folder')
+    parser.add_argument('-PrInfo', '--PrInfo', required=True, help='PR Information')
+    parser.add_argument('-PrURL', '--PrURL', required=True, help='PR URL')
 
     args=parser.parse_args()
+
+    # args.PrInfo = [
+    # {
+    #     "RepositoryName": "FSL.MyProjectHQ.CrewHQ.API.Sandbox",
+    #     "Status": "completed",
+    #     "PullRequestId": 22826,
+    #     "SourceBranch": "refs/heads/feature/SLA-develop-2",
+    #     "TargetBranch": "refs/heads/develop",
+    #     "CreatedBy": "Sagar Shenvi",
+    #     "Reviewers": "William Gardella Alice Gabrylski",
+    #     "CreatedDate": {
+    #     "value": "/Date 1700602964088 /",
+    #     "DisplayHint": 2,
+    #     "DateTime": "Tuesday November 21 2023 4:42:44 PM"
+    #     },
+    #     "ClosedDate": {
+    #     "value": "/Date 1700603058870 /",
+    #     "DisplayHint": 2,
+    #     "DateTime": "Tuesday November 21 2023 4:44:18 PM"
+    #     }
+    # },
+    # {
+    #     "RepositoryName": "FSL.MyProjectHQ.CrewHQ.API.Sandbox",
+    #     "Status": "completed",
+    #     "PullRequestId": 22806,
+    #     "SourceBranch": "refs/heads/feature/SLA-develop",
+    #     "TargetBranch": "refs/heads/develop",
+    #     "CreatedBy": "Sagar Shenvi",
+    #     "Reviewers": "William Gardella Matt Spiewacki",
+    #     "CreatedDate": {
+    #     "value": "/Date 1700583673682 /",
+    #     "DisplayHint": 2,
+    #     "DateTime": "Tuesday November 21 2023 11:21:13 AM"
+    #     },
+    #     "ClosedDate": {
+    #     "value": "/Date 1700590873904 /",
+    #     "DisplayHint": 2,
+    #     "DateTime": "Tuesday November 21 2023 1:21:13 PM"
+    #     }
+    # }
+    # ]
+
+    # print(args.PrInfo)
+
+    # args.PrURL = "https://dev.azure.com/fsllc/Portfolio/_git/FSL.MyProjectHQ.CrewHQ.API.Sandbox/pullrequest/22826,https://dev.azure.com/fsllc/Portfolio/_git/FSL.MyProjectHQ.CrewHQ.API.Sandbox/pullrequest/22806"
+
+    args.PrURL = args.PrURL.split(',')
+
+    # print(args.PrURL)
+
+    for item in args.PrInfo:
+        for url in args.PrURL:
+            if str(item["PullRequestId"]) in url:
+                item["PrURL"]=url
+
+    # print(args.PrInfo)
 
     print('Checking if there are new critical violations added in this version.............')
 
@@ -268,7 +326,7 @@ if __name__ == "__main__":
     
     violations_data = violations_df.to_dict(orient='records')
 
-    generate_application_template(combined, args.app_name, latest_snapshot_date, previous_snapshot_date, added, total, args.html_template_path, args.generated_html_path, violations_data)
+    generate_application_template(combined, args.app_name, latest_snapshot_date, previous_snapshot_date, added, total, args.html_template_path, args.generated_html_path, violations_data, args.PrInfo)
 
     name = 'violations'    
     # set variable
