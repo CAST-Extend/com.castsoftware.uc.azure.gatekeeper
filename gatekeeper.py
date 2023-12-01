@@ -124,7 +124,11 @@ if __name__ == "__main__":
 
     args.PrURL = args.PrURL.split(',')
 
-    # print(args.PrURL)
+    print(type(args.PrInfo))
+    print(args.PrInfo)
+
+    # Convert the string to a Python object
+    args.PrInfo = json.loads(args.PrInfo)
 
     for item in args.PrInfo:
         for url in args.PrURL:
