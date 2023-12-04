@@ -122,6 +122,9 @@ if __name__ == "__main__":
 
     # args.PrURL = "https://dev.azure.com/fsllc/Portfolio/_git/FSL.MyProjectHQ.CrewHQ.API.Sandbox/pullrequest/22826,https://dev.azure.com/fsllc/Portfolio/_git/FSL.MyProjectHQ.CrewHQ.API.Sandbox/pullrequest/22806"
 
+    if not args.console_url.endswith('/'):
+        args.console_url = args.console_url + '/'
+
     args.PrURL = args.PrURL.split(',')
 
     print(type(args.PrInfo))
