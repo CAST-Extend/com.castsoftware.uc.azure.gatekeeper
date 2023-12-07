@@ -7,7 +7,7 @@ from generate_application_template import generate_application_template
 import psycopg2
 
 def get_application_guid(console_url, console_api_key, app_name):
-    url=f"{console_url}/api/applications"
+    url=f"{console_url}api/applications"
     headers = {
         "x-api-key": console_api_key
     }
@@ -32,7 +32,7 @@ def get_application_guid(console_url, console_api_key, app_name):
         print(e)
 
 def get_central_schema(console_url, console_api_key, guid):
-    url=f"{console_url}/api/aic/applications/{guid}"
+    url=f"{console_url}api/aic/applications/{guid}"
     headers = {
         "x-api-key": console_api_key
     }
@@ -127,8 +127,8 @@ if __name__ == "__main__":
 
     args.PrURL = args.PrURL.split(',')
 
-    print(type(args.PrInfo))
-    print(args.PrInfo)
+    # print(type(args.PrInfo))
+    # print(args.PrInfo)
 
     # Convert the string to a Python object
     args.PrInfo = json.loads(args.PrInfo)
@@ -338,5 +338,13 @@ if __name__ == "__main__":
     name = 'violations'    
     # set variable
     print(f'##vso[task.setvariable variable={name};]{value}')
+
+    name_2 = 'ApplicationGUID'    
+    # set variable
+    print(f'##vso[task.setvariable variable={name_2};]{guid}')
+ 
+    name_3 = 'ApplicationCentralSchema'    
+    # set variable
+    print(f'##vso[task.setvariable variable={name_3};]{central_schema}')
 
     exit(added)
