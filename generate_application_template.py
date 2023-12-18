@@ -6,16 +6,14 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
     if not combined.empty:
 
         if combined.iloc[0]['Change'] == 'N/A':
-            Transferability_style= "text-align: center; "
-            print(combined.iloc[0])
+            Changeability_style= "text-align: center; "
         else:
-            Transferability_style = "text-align: center; color: red" if combined.iloc[0]['Change'] < 0 else "text-align: center; color:green"
-            print(combined.iloc[0])
+            Changeability_style = "text-align: center; color: red" if combined.iloc[0]['Change'] < 0 else "text-align: center; color:green"
 
         if combined.iloc[1]['Change'] == 'N/A':
-            Changeability_style = "text-align: center; "
+            Efficiency_style = "text-align: center; "
         else:    
-            Changeability_style = "text-align: center; color: red" if combined.iloc[1]['Change'] < 0 else "text-align: center; color:green"
+            Efficiency_style = "text-align: center; color: red" if combined.iloc[1]['Change'] < 0 else "text-align: center; color:green"
 
         if combined.iloc[2]['Change'] == 'N/A':
             Robustness_style = "text-align: center; "
@@ -33,9 +31,9 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
             TQI_style = "text-align: center; color: red" if combined.iloc[4]['Change'] < 0 else "text-align: center; color:green"
 
         if combined.iloc[5]['Change'] == 'N/A':
-            Efficiency_style = "text-align: center; "
+            Transferability_style = "text-align: center; "
         else:    
-            Efficiency_style = "text-align: center; color: red" if combined.iloc[5]['Change'] < 0 else "text-align: center; color:green"
+            Transferability_style = "text-align: center; color: red" if combined.iloc[5]['Change'] < 0 else "text-align: center; color:green"
 
         # if combined.iloc[6]['Change'] == 'N/A':
         #     Documentation_style = "text-align: center; "
@@ -46,14 +44,14 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
 
 
         if combined.iloc[0]['Previous'] == 'N/A':
-            Transferability_prev = combined.iloc[0]['Previous']
+            Changeability_prev = combined.iloc[0]['Previous']
         else:
-            Transferability_prev = "%.2f" % round(combined.iloc[0]['Previous'], 2)
+            Changeability_prev = "%.2f" % round(combined.iloc[0]['Previous'], 2)
 
         if combined.iloc[1]['Previous'] == 'N/A':
-            Changeability_prev = combined.iloc[1]['Previous']
+            Efficiency_prev = combined.iloc[1]['Previous']
         else:
-            Changeability_prev = "%.2f" % round(combined.iloc[1]['Previous'], 2)
+            Efficiency_prev = "%.2f" % round(combined.iloc[1]['Previous'], 2)
 
         if combined.iloc[2]['Previous'] == 'N/A':
             Robustness_prev = combined.iloc[2]['Previous']
@@ -71,9 +69,9 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
             TQI_prev = "%.2f" % round(combined.iloc[4]['Previous'], 2)
         
         if combined.iloc[5]['Previous'] == 'N/A':
-            Efficiency_prev = combined.iloc[5]['Previous']
+            Transferability_prev = combined.iloc[5]['Previous']
         else:
-            Efficiency_prev = "%.2f" % round(combined.iloc[5]['Previous'], 2)
+            Transferability_prev = "%.2f" % round(combined.iloc[5]['Previous'], 2)
 
         # if combined.iloc[6]['Previous'] == 'N/A':
         #     Documentation_prev = combined.iloc[6]['Previous']
@@ -82,14 +80,14 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
 
 
         if combined.iloc[0]['Change'] == 'N/A':
-            Transferability_change = combined.iloc[0]['Change']
+            Changeability_change = combined.iloc[0]['Change']
         else:
-            Transferability_change = "%.2f" % round(combined.iloc[0]['Change'], 2)
+            Changeability_change = "%.2f" % round(combined.iloc[0]['Change'], 2)
 
         if combined.iloc[1]['Change'] == 'N/A':
-            Changeability_change = combined.iloc[1]['Change']
+            Efficiency_change = combined.iloc[1]['Change']
         else:
-            Changeability_change = "%.2f" % round(combined.iloc[1]['Change'], 2)
+            Efficiency_change = "%.2f" % round(combined.iloc[1]['Change'], 2)
 
         if combined.iloc[2]['Change'] == 'N/A':
             Robustness_change = combined.iloc[2]['Change']
@@ -107,9 +105,9 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
             TQI_change = "%.2f" % round(combined.iloc[4]['Change'], 2)
         
         if combined.iloc[5]['Change'] == 'N/A':
-            Efficiency_change = combined.iloc[5]['Change']
+            Transferability_change = combined.iloc[5]['Change']
         else:
-            Efficiency_change = "%.2f" % round(combined.iloc[5]['Change'], 2)
+            Transferability_change = "%.2f" % round(combined.iloc[5]['Change'], 2)
 
         # if combined.iloc[6]['Change'] == 'N/A':
         #     Documentation_change = combined.iloc[6]['Change']
@@ -118,16 +116,16 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
 
         table_data =f"""
             <tr>
-                <td style="{td_style}">Transferability</td>
-                <td style="text-align: center; {td_style}">{Transferability_prev}</td>
-                <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[0]['Latest'], 2)}</td>
-                <td style="{Transferability_style}; {td_style}">{Transferability_change}%</td>
-            </tr>
-            <tr>
                 <td style="{td_style}">Changeability</td>
                 <td style="text-align: center; {td_style}">{Changeability_prev}</td>
-                <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[1]['Latest'], 2)}</td>
+                <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[0]['Latest'], 2)}</td>
                 <td style="{Changeability_style}; {td_style}">{Changeability_change}%</td>
+            </tr>
+            <tr>
+                <td style="{td_style}">Efficiency</td>
+                <td style="text-align: center; {td_style}">{Efficiency_prev}</td>
+                <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[1]['Latest'], 2)}</td>
+                <td style="{Efficiency_style}; {td_style}">{Efficiency_change}%</td>
             </tr>
             <tr>
                 <td style="{td_style}">Robustness</td>
@@ -148,10 +146,10 @@ def generate_application_template(combined, application, snapshot, prev_snapshot
                 <td style="{TQI_style}; {td_style}">{TQI_change}%</td>
             </tr>
             <tr>
-                <td style="{td_style}">Efficiency</td>
-                <td style="text-align: center; {td_style}">{Efficiency_prev}</td>
+                <td style="{td_style}">Transferability</td>
+                <td style="text-align: center; {td_style}">{Transferability_prev}</td>
                 <td style="text-align: center; {td_style}">{"%.2f" % round(combined.iloc[5]['Latest'], 2)}</td>
-                <td style="{Efficiency_style}; {td_style}">{Efficiency_change}%</td>
+                <td style="{Transferability_style}; {td_style}">{Transferability_change}%</td>
             </tr>
             """
 

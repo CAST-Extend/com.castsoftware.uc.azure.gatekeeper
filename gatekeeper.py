@@ -306,7 +306,8 @@ if __name__ == "__main__":
     dmr.metric_value_index = 1 and dmr.metric_id in (10151,10152))
     ) prev_snapshot
     where
-    current_snapshot.metric_id = prev_snapshot.metric_id"""
+    current_snapshot.metric_id = prev_snapshot.metric_id
+    order by 1"""
 
     cursor.execute(sql_query)
 
@@ -316,7 +317,7 @@ if __name__ == "__main__":
     new_column_names = {'metric_name':'', 'previous':'Previous', 'latest':'Latest', 'change':'Change'}
     df = df.rename(columns=new_column_names)
 
-    combined = df.drop([0, 1])
+    combined = df.drop([2, 3])
 
     # Close the cursor and connection
     cursor.close()
